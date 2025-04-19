@@ -1,0 +1,159 @@
+.ingredient-display {
+  width: 100%;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ingredient-display h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.ingredient-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.ingredient-categories button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.ingredient-categories button:hover {
+  background-color: #444;
+}
+
+.ingredient-categories button.active {
+  background-color: #4285f4;
+  border-color: #4285f4;
+}
+
+.ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #4285f4 #333;
+}
+
+.ingredients-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ingredients-grid::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.ingredients-grid::-webkit-scrollbar-thumb {
+  background-color: #4285f4;
+  border-radius: 4px;
+}
+
+.ingredient-card {
+  background-color: #333;
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.ingredient-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ingredient-image {
+  width: 64px;
+  height: 64px;
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.8rem;
+}
+
+.ingredient-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.ingredient-name {
+  color: #fff;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  font-size: 15px;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+.ingredient-category {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.no-ingredients {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #999;
+  padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .ingredients-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    max-height: 300px;
+  }
+  
+  .ingredient-image {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .ingredient-name {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ingredient-display {
+    padding: 1rem;
+  }
+  
+  .ingredient-display h2 {
+    font-size: 1.3rem;
+  }
+  
+  .ingredient-categories button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .ingredients-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.8rem;
+  }
+} 

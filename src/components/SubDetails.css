@@ -1,0 +1,133 @@
+.sub-details {
+  width: 100%;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sub-details h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.sub-details h3 {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #4285f4;
+}
+
+.sub-image-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.sub-image {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.sub-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.tip-box {
+  background-color: #333;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.tip-box p {
+  color: #fff;
+  margin: 0;
+  font-style: italic;
+}
+
+.ingredients-section {
+  margin-top: 1.5rem;
+}
+
+.ingredients-list {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  border-radius: 4px;
+  padding: 0.5rem;
+  min-width: 140px;
+  flex: 1;
+}
+
+.ingredient-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ingredient-icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.ingredient-name {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .sub-details {
+    padding: 1rem;
+  }
+  
+  .ingredients-list {
+    gap: 0.5rem;
+  }
+  
+  .ingredient-item {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-details h2 {
+    font-size: 1.3rem;
+  }
+  
+  .sub-details h3 {
+    font-size: 1.1rem;
+  }
+  
+  .ingredient-item {
+    min-width: 100%;
+  }
+  
+  .ingredient-icon {
+    width: 24px;
+    height: 24px;
+  }
+} 

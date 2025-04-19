@@ -1,0 +1,106 @@
+.sub-trainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.trainer-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.trainer-tabs button {
+  background-color: #2c2c2c;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.trainer-tabs button:hover {
+  background-color: #3a3a3a;
+}
+
+.trainer-tabs button.active {
+  background-color: #4285f4;
+  border-color: #4285f4;
+}
+
+.tip-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tip {
+  background-color: #333;
+  border-radius: 4px;
+  padding: 0.8rem 1.2rem;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+}
+
+.tip p {
+  margin: 0;
+  color: #fff;
+}
+
+.category-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.category-selector label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.category-selector select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #2c2c2c;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.trainer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .trainer-content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .trainer-content > * {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .trainer-tabs button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .tip {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+} 
