@@ -34,4 +34,13 @@ footer {
   main {
     padding: 0.5rem;
   }
-} 
+}
+
+/* LTO Star Style */
+.lto-star {
+  color: gold;
+  margin-left: 4px;
+  font-size: 0.8em;
+  vertical-align: super;
+  text-shadow: 0 0 2px black;
+}

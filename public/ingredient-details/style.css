@@ -1,0 +1,123 @@
+/* Styles for ingredient detail HTML content */
+.ingredient-article {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #fff;
+}
+
+.ingredient-hero {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ingredient-hero img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.ingredient-article h1 {
+  font-size: 2.5rem;
+  margin: 1rem 0 1.5rem 0;
+  color: #4285f4;
+  text-align: center;
+}
+
+.info-card {
+  background-color: #333;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-left: 5px solid #4285f4;
+}
+
+.info-card h2 {
+  color: #4285f4;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(66, 133, 244, 0.3);
+}
+
+.info-card ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.info-card li {
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.info-card strong {
+  color: #4285f4;
+  font-weight: 600;
+}
+
+/* Alternate styling for the second card */
+.info-card:last-of-type {
+  border-left-color: #ff5252;
+}
+
+.info-card:last-of-type h2 {
+  color: #ff5252;
+  border-bottom-color: rgba(255, 82, 82, 0.3);
+}
+
+.info-card:last-of-type strong {
+  color: #ff5252;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ingredient-article {
+    padding: 0 1rem;
+  }
+  
+  .ingredient-article h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .info-card {
+    padding: 1rem;
+  }
+  
+  .info-card h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ingredient-article h1 {
+    font-size: 1.8rem;
+  }
+  
+  .ingredient-hero {
+    margin-bottom: 1rem;
+  }
+  
+  .info-card {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .info-card h2 {
+    font-size: 1.2rem;
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .info-card li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+} 

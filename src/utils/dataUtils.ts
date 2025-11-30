@@ -2,6 +2,7 @@
 export interface Ingredient {
   category: string;
   image: string;
+  is_lto?: boolean;
 }
 
 export interface Sub {
@@ -20,41 +21,12 @@ export interface SortingConfig {
   ingredient_image_size: number;
   ui_text_size: number;
   ingredient_text_size: number;
+  tip_icon?: string;
 }
 
-// Ingredient information data
-export const INGREDIENT_INFO: Record<string, Ingredient> = {
-  "Ham": { "category": "Meats", "image": "Ham.png" },
-  "Ham (Double)": { "category": "Meats", "image": "HamDouble.png" },
-  "Lettuce": { "category": "Veggies", "image": "Lettuce.png" },
-  "Tomato": { "category": "Veggies", "image": "Tomato.png" },
-  "Mayo": { "category": "Condiments", "image": "Mayo.png" },
-  "Roast Beef": { "category": "Meats", "image": "RoastBeef.png" },
-  "Roast Beef (Double)": { "category": "Meats", "image": "RoastBeefDouble.png" },
-  "Tuna Salad": { "category": "Meats", "image": "TunaSalad.png" },
-  "Cucumber": { "category": "Veggies", "image": "Cucumber.png" },
-  "Turkey": { "category": "Meats", "image": "Turkey.png" },
-  "Vito": { "category": "Meats", "image": "Vito.png" },
-  "Onion": { "category": "Veggies", "image": "Onion.png" },
-  "Oil & Vinegar": { "category": "Condiments", "image": "Oil.png" },
-  "Oregano-Basil": { "category": "Condiments", "image": "Basil.png" },
-  "Avocado Spread": { "category": "Condiments", "image": "AvocadoSpread.png" },
-  "Vito (Double)": { "category": "Meats", "image": "VitoDouble.png" },
-  "Jimmy Peppers": { "category": "Veggies", "image": "Peppers.png" },
-  "Yellow Mustard": { "category": "Condiments", "image": "Mustard.png" },
-  "Bacon": { "category": "Meats", "image": "Bacon.png" },
-  "Sliced Pickles": { "category": "Veggies", "image": "Pickles.png" },
-  "All-Natural Chicken": { "category": "Meats", "image": "Chicken.png" },
-  "Provolone Cheese": { "category": "Cheese", "image": "Provolone.png" },
-  "Provolone (Double)": { "category": "Cheese", "image": "ProvoloneDouble.png" },
-  "Cheddar Cheese": { "category": "Cheese", "image": "Cheddar.png" },
-  "Ranch": { "category": "Condiments", "image": "Ranch.png" },
-  "Parmesan Cheese": { "category": "Cheese", "image": "Parmesan.png" },
-  "Horseradish Sauce": { "category": "Condiments", "image": "Horseradish.png" },
-  "Crispy Fried Onions": { "category": "Veggies", "image": "FriedOnions.png" }
-};
+export type IngredientData = Record<string, Ingredient>;
 
-export const INGREDIENT_CATEGORIES = ["All", "Meats", "Cheese", "Veggies", "Condiments", "Other"];
+export const INGREDIENT_CATEGORIES = ["All", "Wraps", "Meats", "Cheese", "Veggies", "Condiments", "LTO"];
 
 export const GENERAL_TIPS = [
   "Remember to wash your hands and maintain a clean workstation!",
@@ -64,18 +36,56 @@ export const GENERAL_TIPS = [
   "Practice safe temperatures for cooked and toasted subs."
 ];
 
+export interface TipObject {
+  text: string;
+  icon?: string;
+}
+
+// Load site tips
+export async function loadSiteTips(): Promise<(string | TipObject)[]> {
+  try {
+    // Add timestamp to prevent caching
+    const response = await fetch(`/site_tips.json?t=${Date.now()}`);
+    if (!response.ok) {
+      throw new Error(`Failed to load site tips: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading site tips:', error);
+    // Return default tips as fallback
+    return GENERAL_TIPS;
+  }
+}
+
 // Load sub data from the JSON file
 export async function loadSubData(): Promise<SubData> {
   try {
-    const response = await fetch('/sub_data.json');
+    // Add timestamp to prevent caching
+    const response = await fetch(`/sub_data.json?t=${Date.now()}`);
     if (!response.ok) {
       throw new Error(`Failed to load sub data: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
     console.error('Error loading sub data:', error);
+    alert("Failed to load sub_data.json! Check console for details. Loading sample data instead.");
     // Return sample data as fallback if we can't load from file
     return getSampleSubData();
+  }
+}
+
+// Load ingredient data
+export async function loadIngredientData(): Promise<IngredientData> {
+  try {
+    // Add timestamp to prevent caching
+    const response = await fetch(`/ingredient_data.json?t=${Date.now()}`);
+    if (!response.ok) {
+      throw new Error(`Failed to load ingredient data: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading ingredient data:', error);
+    return {};
   }
 }
 
@@ -94,7 +104,8 @@ export async function loadSortingConfig(): Promise<SortingConfig> {
       sort_mode: "category",
       ingredient_image_size: 64,
       ui_text_size: 20,
-      ingredient_text_size: 15
+      ingredient_text_size: 15,
+      tip_icon: "💡"
     };
   }
 }

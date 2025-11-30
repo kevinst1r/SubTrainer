@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './IngredientDisplay.css';
 import { Ingredient } from '../utils/dataUtils';
 
@@ -7,21 +7,60 @@ interface IngredientDisplayProps {
   ingredientInfo: Record<string, Ingredient>;
   imageSize: number;
   textSize: number;
+  sortMode?: string;
 }
 
 const IngredientDisplay: React.FC<IngredientDisplayProps> = ({ 
   categories, 
   ingredientInfo,
   imageSize,
-  textSize
+  textSize,
+  sortMode = 'category'
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  // Filter ingredients by selected category
-  const filteredIngredients = Object.entries(ingredientInfo).filter(([name, info]) => {
-    if (selectedCategory === 'All') return true;
-    return info.category === selectedCategory;
-  });
+  // Deduplicate ingredients (combine variants like "Bacon x2", "Bacon x3" into just "Bacon")
+  const uniqueIngredients = useMemo(() => {
+    const groups = new Map<string, string>(); // normalizedName -> bestOriginalKey
+
+    Object.keys(ingredientInfo).forEach(key => {
+      const normalized = key.replace(/ x\d+$/, '');
+      
+      if (!groups.has(normalized)) {
+        groups.set(normalized, key);
+      } else {
+        // If we find the exact match (no suffix), prefer it over the suffixed version
+        if (key === normalized) {
+          groups.set(normalized, key);
+        }
+      }
+    });
+
+    return Array.from(groups.entries()).map(([normalizedName, originalKey]) => ({
+      originalKey,
+      displayName: normalizedName,
+      info: ingredientInfo[originalKey]
+    }));
+  }, [ingredientInfo]);
+
+  // Filter ingredients by selected category and sort them
+  const filteredIngredients = uniqueIngredients
+    .filter(({ info }) => {
+      if (selectedCategory === 'All') return true;
+      if (selectedCategory === 'LTO') return info.is_lto;
+      return info.category === selectedCategory;
+    })
+    .sort((a, b) => {
+      if (sortMode === 'alphabetical') {
+        return a.displayName.localeCompare(b.displayName);
+      }
+      // Default 'category' sort: Sort by category first, then alphabetically
+      const catCompare = a.info.category.localeCompare(b.info.category);
+      if (catCompare === 0) {
+        return a.displayName.localeCompare(b.displayName);
+      }
+      return catCompare;
+    });
 
   return (
     <div className="ingredient-display">
@@ -43,15 +82,18 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
         {filteredIngredients.length === 0 ? (
           <p className="no-ingredients">No ingredients found in this category</p>
         ) : (
-          filteredIngredients.map(([name, info]) => (
-            <div key={name} className="ingredient-card">
+          filteredIngredients.map(({ originalKey, displayName, info }) => (
+            <div 
+              key={originalKey} 
+              className="ingredient-card"
+            >
               <div 
                 className="ingredient-image"
                 style={{ width: `${imageSize}px`, height: `${imageSize}px` }}
               >
                 <img 
                   src={`/images/${info.image}`} 
-                  alt={name}
+                  alt={displayName}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = '/icon.png';
@@ -63,7 +105,10 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
                 className="ingredient-name"
                 style={{ fontSize: `${textSize}px` }}
               >
-                {name}
+                {displayName}
+                {info.is_lto && (
+                  <span className="lto-star" title="Limited Time Offer">★</span>
+                )}
               </span>
               <span className="ingredient-category">{info.category}</span>
             </div>

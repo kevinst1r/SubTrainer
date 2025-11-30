@@ -47,26 +47,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
-  max-height: 400px;
-  overflow-y: auto;
   padding-right: 0.5rem;
-  scrollbar-width: thin;
-  scrollbar-color: #4285f4 #333;
 }
 
-.ingredients-grid::-webkit-scrollbar {
-  width: 8px;
-}
-
-.ingredients-grid::-webkit-scrollbar-track {
-  background: #333;
-  border-radius: 4px;
-}
-
-.ingredients-grid::-webkit-scrollbar-thumb {
-  background-color: #4285f4;
-  border-radius: 4px;
-}
+/* Scrollbar styles removed as container expands dynamically */
 
 .ingredient-card {
   background-color: #333;
@@ -77,11 +61,6 @@
   align-items: center;
   text-align: center;
   transition: transform 0.2s ease;
-}
-
-.ingredient-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .ingredient-image {
@@ -125,7 +104,6 @@
 @media (max-width: 768px) {
   .ingredients-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    max-height: 300px;
   }
   
   .ingredient-image {

@@ -4,12 +4,12 @@
       "name": "#1 The Pepe",
       "ingredients": [
         "Ham",
-        "Provolone Cheese",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone"
       ],
-      "tip": "Wrap sub neatly and keep ham slices folded.",
+      "tip": "Classic Ham n' Cheese!",
       "image": "subs/Pepe.png"
     },
     {
@@ -20,18 +20,18 @@
         "Tomato",
         "Mayo"
       ],
-      "tip": "Roast beef must be sliced fresh daily for best taste.",
+      "tip": "Where's the Beef?  John has it.",
       "image": "subs/BigJohn.png"
     },
     {
       "name": "#3 Totally Tuna",
       "ingredients": [
-        "Tuna Salad",
         "Lettuce",
         "Tomato",
-        "Cucumber"
+        "Cucumber",
+        "Tuna"
       ],
-      "tip": "Drain tuna well to avoid soggy bread.",
+      "tip": "If it comes with Tuna it comes with Cucumber",
       "image": "subs/TotallyTuna.png"
     },
     {
@@ -42,34 +42,34 @@
         "Tomato",
         "Mayo"
       ],
-      "tip": "Thin, even turkey slices are key.",
+      "tip": "Gobble Gobble. Turkey.",
       "image": "subs/TurkeyTom.png"
     },
     {
       "name": "#5 Vito",
       "ingredients": [
         "Vito",
-        "Provolone Cheese",
         "Onion",
-        "Oil & Vinegar",
-        "Oregano-Basil",
         "Lettuce",
-        "Tomato"
+        "Tomato",
+        "Provolone",
+        "Sauce",
+        "Shake"
       ],
-      "tip": "Vito is all about the classic Italian flavors.",
+      "tip": "If it comes with Vito it comes with Cheese, Shake, and Oil",
       "image": "subs/Vito.png"
     },
     {
       "name": "#6 The Veggie",
       "ingredients": [
-        "Provolone (Double)",
         "Avocado Spread",
         "Cucumber",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone x2"
       ],
-      "tip": "Great vegetarian option; keep avocado spread fresh.",
+      "tip": "If it comes with Avocado it comes with Cucumber",
       "image": "subs/Veggie.png"
     }
   ],
@@ -77,17 +77,17 @@
     {
       "name": "#7 Spicy East Coast Italian",
       "ingredients": [
-        "Vito (Double)",
-        "Provolone Cheese",
-        "Jimmy Peppers",
         "Onion",
         "Mayo",
-        "Oil & Vinegar",
-        "Oregano-Basil",
         "Lettuce",
-        "Tomato"
+        "Tomato",
+        "Vito x2",
+        "Provolone",
+        "Peppers",
+        "Sauce",
+        "Shake"
       ],
-      "tip": "Jimmy Peppers first so they blend with the meat flavors.",
+      "tip": "Hot Peppers and double the Vito for all the spice!",
       "image": "subs/SpicyItalian.png"
     },
     {
@@ -95,13 +95,13 @@
       "ingredients": [
         "Roast Beef",
         "Ham",
-        "Provolone Cheese",
-        "Yellow Mustard",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone",
+        "Mustard"
       ],
-      "tip": "Yellow mustard goes lightly so as not to overpower.",
+      "tip": "Billy Roasted his Ham in the Cheesy Mustard. B = 8",
       "image": "subs/BillyClub.png"
     },
     {
@@ -109,27 +109,27 @@
       "ingredients": [
         "Vito",
         "Ham",
-        "Provolone Cheese",
         "Onion",
-        "Oil & Vinegar",
-        "Oregano-Basil",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone",
+        "Shake",
+        "Sauce"
       ],
-      "tip": "Evenly distribute meats for balanced bites.",
+      "tip": "Italian Vito Ham",
       "image": "subs/ItalianNight.png"
     },
     {
       "name": "#10 Hunter's Club",
       "ingredients": [
-        "Roast Beef (Double)",
-        "Provolone Cheese",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Roast Beef x2",
+        "Provolone"
       ],
-      "tip": "Layer the roast beef carefully so it fits properly.",
+      "tip": "The Hunter brings home ALL the Beef to make that Cheese!",
       "image": "subs/Hunters.png"
     },
     {
@@ -137,39 +137,39 @@
       "ingredients": [
         "Turkey",
         "Ham",
-        "Provolone Cheese",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone"
       ],
-      "tip": "Classic combo, ensure fresh turkey and ham.",
+      "tip": "Classic combo, Turkey Ham and Cheese!",
       "image": "subs/Country.png"
     },
     {
       "name": "#12 Beach Club",
       "ingredients": [
         "Turkey",
-        "Provolone (Double)",
         "Avocado Spread",
         "Cucumber",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone x2"
       ],
-      "tip": "Fresh cucumbers for that beachy crunch.",
+      "tip": "Fresh Cucumbers for that beachy crunch. Turkey.",
       "image": "subs/Beach.png"
     },
     {
       "name": "#13 Jimmy Cubano",
       "ingredients": [
-        "Bacon",
         "Ham",
-        "Provolone Cheese",
-        "Sliced Pickles",
-        "Yellow Mustard",
-        "Mayo"
+        "Mayo",
+        "Bacon x4",
+        "Provolone",
+        "Pickles",
+        "Mustard"
       ],
-      "tip": "Think Cuban sandwich style: don't skimp on pickles.",
+      "tip": "The Cheesy Bacon, extra Pickle, no Letuce or Tomato one. With Mustard.",
       "image": "subs/Cubano.png"
     },
     {
@@ -181,43 +181,43 @@
         "Tomato",
         "Mayo"
       ],
-      "tip": "Great alternative if you want two meats but not all the extras.",
+      "tip": "There's a Turkey in my boot!  Wait... that's Beef.",
       "image": "subs/Bootlegger.png"
     },
     {
       "name": "#15 Club Tuna",
       "ingredients": [
-        "Tuna Salad",
-        "Provolone (Double)",
         "Cucumber",
         "Lettuce",
-        "Tomato"
+        "Tomato",
+        "Provolone x2",
+        "Tuna"
       ],
-      "tip": "Provolone (Double) is key for that classic taste.",
+      "tip": "Totally Tuna with Double Provolone.",
       "image": "subs/ClubTuna.png"
     },
     {
       "name": "#16 Club Lulu",
       "ingredients": [
         "Turkey",
-        "Bacon",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Bacon x3"
       ],
-      "tip": "Bacon crispness is important here.",
+      "tip": "Turkey Bacon Lulu in the Club!!!!!",
       "image": "subs/ClubLulu.png"
     },
     {
       "name": "#17 Ultimate Porker",
       "ingredients": [
         "Ham",
-        "Bacon",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Bacon x3"
       ],
-      "tip": "Stack ham neatly on top of bacon.",
+      "tip": "Pork = Ham + Bacon",
       "image": "subs/Porker.png"
     },
     {
@@ -227,27 +227,26 @@
         "Ham",
         "Roast Beef",
         "Turkey",
-        "Provolone Cheese",
-        "Jimmy Peppers",
         "Onion",
-        "Oil & Vinegar",
-        "Oregano-Basil",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Provolone",
+        "Sauce",
+        "Shake"
       ],
-      "tip": "Extra large. Balance all those meats carefully!",
+      "tip": "ALL THE MEATS!!!! (minus chicken, tuna, and bacon)",
       "image": "subs/Gargantuan.png"
     },
     {
       "name": "J.J.B.L.T.",
       "ingredients": [
-        "Bacon",
         "Lettuce",
         "Tomato",
-        "Mayo"
+        "Mayo",
+        "Bacon x6"
       ],
-      "tip": "Quick and simple; crisp bacon is essential.",
+      "tip": "Bacon. Lettuce. Tomato.  6 Bacon.",
       "image": "subs/BLT.png"
     }
   ],
@@ -255,14 +254,14 @@
     {
       "name": "Chicken Bacon Ranch",
       "ingredients": [
-        "All-Natural Chicken",
-        "Bacon",
-        "Provolone Cheese",
         "Ranch",
         "Lettuce",
         "Tomato",
         "Onion",
-        "Mayo"
+        "Mayo",
+        "Bacon x2",
+        "Provolone",
+        "Chicken"
       ],
       "tip": "Toasting melts the cheese and blends ranch with bacon flavor.",
       "image": "subs/ChickenBacon.png"
@@ -271,34 +270,110 @@
       "name": "Ultimate Italian",
       "ingredients": [
         "Vito",
-        "Ham (Double)",
-        "Bacon",
-        "Parmesan Cheese",
-        "Provolone Cheese",
         "Lettuce",
         "Tomato",
         "Onion",
         "Mayo",
-        "Oregano-Basil",
-        "Oil & Vinegar"
+        "Ham x2",
+        "Bacon x2",
+        "Provolone",
+        "Parmesan",
+        "Sauce",
+        "Shake"
       ],
-      "tip": "Balance two cheese types carefully—don't overload.",
+      "tip": "Balance two cheese types carefully\u2014don't overload.",
       "image": "subs/UltimateItalian.png"
     },
     {
       "name": "Roast Beef & Cheddar",
       "ingredients": [
-        "Roast Beef (Double)",
         "Cheddar Cheese",
         "Horseradish Sauce",
         "Crispy Fried Onions",
         "Lettuce",
         "Tomato",
         "Onion",
-        "Mayo"
+        "Mayo",
+        "Roast Beef x2"
       ],
       "tip": "Horseradish can be strong; moderate the amount.",
       "image": "subs/RoastCheddar.png"
+    }
+  ],
+  "Wraps": [
+    {
+      "name": "Chicken Caesar Wrap",
+      "ingredients": [
+        "Garlic Herb Wrap",
+        "Caesar Dressing",
+        "Lettuce",
+        "Tomato",
+        "Mayo",
+        "Parmesan",
+        "Croutons",
+        "Chicken"
+      ],
+      "tip": "Add mini croutons just before wrapping to maintain crunch.",
+      "image": "subs/ChickenCaesarWrap.png"
+    },
+    {
+      "name": "Kickin' Ranch Chicken Wrap",
+      "ingredients": [
+        "Flour Wrap",
+        "Kickin' Ranch",
+        "Onion",
+        "Lettuce",
+        "Tomato",
+        "Mayo",
+        "Provolone",
+        "Chicken",
+        "Peppers"
+      ],
+      "tip": "Apply Kickin' Ranch evenly to distribute the heat.",
+      "image": "subs/KickinRanchWrap.png"
+    },
+    {
+      "name": "Tuscan Italian Wrap",
+      "ingredients": [
+        "Vito",
+        "Garlic Herb Wrap",
+        "Ham",
+        "Lettuce",
+        "Onion",
+        "Tomato",
+        "Mayo",
+        "Parmesan",
+        "Sauce",
+        "Shake"
+      ],
+      "tip": "Roll tightly to keep all ingredients secure.",
+      "image": "subs/TuscanWrap.png"
+    }
+  ],
+  "LTO": [
+    {
+      "name": "3 Cheese",
+      "ingredients": [
+        "Mozzarella",
+        "Parmesan",
+        "Provolone",
+        "Marinara",
+        "Shake"
+      ],
+      "tip": "Don't forget the shake!",
+      "image": "3Cheese.png"
+    },
+    {
+      "name": "Sicilian",
+      "ingredients": [
+        "Marinara",
+        "Mozzarella",
+        "Vito",
+        "Ham",
+        "Shake"
+      ],
+      "tip": "Don't forget the shake!",
+      "image": "Sicilian.png"
     }
   ]
 }

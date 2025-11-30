@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import './SubTrainer.css';
-import { SubData, INGREDIENT_INFO, INGREDIENT_CATEGORIES, GENERAL_TIPS, loadSortingConfig } from '../utils/dataUtils';
+import { SubData, IngredientData, INGREDIENT_CATEGORIES, GENERAL_TIPS, loadSortingConfig, loadSiteTips, TipObject } from '../utils/dataUtils';
 import SubList from './SubList';
 import IngredientDisplay from './IngredientDisplay';
 import SubDetails from './SubDetails';
 import SubQuiz from './SubQuiz';
+import TipsDisplay from './TipsDisplay';
 
 interface SubTrainerProps {
   subData: SubData;
+  ingredientData: IngredientData;
 }
 
-const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
+const SubTrainer: React.FC<SubTrainerProps> = ({ subData, ingredientData }) => {
   const [activeTab, setActiveTab] = useState<string>('subList');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortingConfig, setSortingConfig] = useState({
     sort_mode: "category",
     ingredient_image_size: 64,
     ui_text_size: 20,
-    ingredient_text_size: 15
+    ingredient_text_size: 15,
+    tip_icon: "💡"
   });
   const [selectedSub, setSelectedSub] = useState<string | null>(null);
-  const [randomTip, setRandomTip] = useState<string>('');
+  const [randomTip, setRandomTip] = useState<string | TipObject>('');
+  const [allTips, setAllTips] = useState<(string | TipObject)[]>([]);
+  const [score, setScore] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 });
 
   // Load sorting configuration on component mount
   useEffect(() => {
@@ -35,10 +40,30 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
     
     fetchSortingConfig();
     
-    // Set a random tip
-    const randomIndex = Math.floor(Math.random() * GENERAL_TIPS.length);
-    setRandomTip(GENERAL_TIPS[randomIndex]);
+    // Load tips and set a random one
+    const initializeTips = async () => {
+      const loadedTips = await loadSiteTips();
+      if (loadedTips && loadedTips.length > 0) {
+        setAllTips(loadedTips);
+        const randomIndex = Math.floor(Math.random() * loadedTips.length);
+        setRandomTip(loadedTips[randomIndex]);
+      } else {
+        // Fallback
+        setAllTips(GENERAL_TIPS);
+        const randomIndex = Math.floor(Math.random() * GENERAL_TIPS.length);
+        setRandomTip(GENERAL_TIPS[randomIndex]);
+      }
+    };
+    initializeTips();
   }, []);
+
+  // Helper to render random tip
+  const renderRandomTip = () => {
+    if (!randomTip) return null;
+    const text = typeof randomTip === 'string' ? randomTip : randomTip.text;
+    const icon = (typeof randomTip === 'object' && randomTip.icon) ? randomTip.icon : sortingConfig.tip_icon;
+    return <p>{icon} <strong>Tip:</strong> {text}</p>;
+  };
 
   // Functions to handle sub selection
   const handleSubSelect = (subName: string) => {
@@ -65,7 +90,7 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
     : allSubs.filter(sub => {
         // Match by category name
         if (Object.keys(subData).includes(selectedCategory)) {
-          return subData[selectedCategory].includes(sub);
+          return subData[selectedCategory].some(s => s.name === sub.name);
         }
         return false;
       });
@@ -86,6 +111,12 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
           Ingredients
         </button>
         <button 
+          className={activeTab === 'tips' ? 'active' : ''}
+          onClick={() => setActiveTab('tips')}
+        >
+          Tips
+        </button>
+        <button 
           className={activeTab === 'quiz' ? 'active' : ''}
           onClick={() => setActiveTab('quiz')}
         >
@@ -95,23 +126,25 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
       
       <div className="tip-container">
         <div className="tip">
-          <p>💡 <strong>Tip:</strong> {randomTip}</p>
+          {renderRandomTip()}
         </div>
       </div>
 
-      <div className="category-selector">
-        <label htmlFor="category">Category:</label>
-        <select 
-          id="category" 
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="All">All</option>
-          {allCategories.map(category => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
-      </div>
+      {activeTab !== 'ingredients' && activeTab !== 'tips' && (
+        <div className="category-selector">
+          <label htmlFor="category">Category:</label>
+          <select 
+            id="category" 
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="All">All</option>
+            {allCategories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="trainer-content">
         {activeTab === 'subList' && (
@@ -125,24 +158,33 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
         {activeTab === 'ingredients' && (
           <IngredientDisplay 
             categories={INGREDIENT_CATEGORIES}
-            ingredientInfo={INGREDIENT_INFO}
+            ingredientInfo={ingredientData}
             imageSize={sortingConfig.ingredient_image_size}
             textSize={sortingConfig.ingredient_text_size}
+            sortMode={sortingConfig.sort_mode}
           />
+        )}
+
+        {activeTab === 'tips' && (
+          <TipsDisplay tips={allTips} tipIcon={sortingConfig.tip_icon} />
         )}
         
         {activeTab === 'quiz' && (
           <SubQuiz 
             allSubs={allSubs}
-            ingredientInfo={INGREDIENT_INFO}
+            subData={subData}
+            ingredientInfo={ingredientData}
             categories={INGREDIENT_CATEGORIES}
             onExit={handleExitQuiz}
+            score={score}
+            setScore={setScore}
           />
         )}
 
-        {activeTab !== 'quiz' && activeTab !== 'ingredients' && selectedSubObject && (
+        {activeTab !== 'quiz' && activeTab !== 'ingredients' && activeTab !== 'tips' && selectedSubObject && (
           <SubDetails 
             sub={selectedSubObject} 
+            ingredientData={ingredientData}
           />
         )}
       </div>
@@ -150,4 +192,4 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData }) => {
   );
 };
 
-export default SubTrainer; 
+export default SubTrainer;

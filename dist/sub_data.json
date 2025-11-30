@@ -1,0 +1,304 @@
+{
+  "Originals": [
+    {
+      "name": "#1 The Pepe",
+      "ingredients": [
+        "Ham",
+        "Provolone Cheese",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Wrap sub neatly and keep ham slices folded.",
+      "image": "subs/Pepe.png"
+    },
+    {
+      "name": "#2 Big John",
+      "ingredients": [
+        "Roast Beef",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Roast beef must be sliced fresh daily for best taste.",
+      "image": "subs/BigJohn.png"
+    },
+    {
+      "name": "#3 Totally Tuna",
+      "ingredients": [
+        "Tuna Salad",
+        "Lettuce",
+        "Tomato",
+        "Cucumber"
+      ],
+      "tip": "Drain tuna well to avoid soggy bread.",
+      "image": "subs/TotallyTuna.png"
+    },
+    {
+      "name": "#4 Turkey Tom",
+      "ingredients": [
+        "Turkey",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Thin, even turkey slices are key.",
+      "image": "subs/TurkeyTom.png"
+    },
+    {
+      "name": "#5 Vito",
+      "ingredients": [
+        "Vito",
+        "Provolone Cheese",
+        "Onion",
+        "Oil & Vinegar",
+        "Oregano-Basil",
+        "Lettuce",
+        "Tomato"
+      ],
+      "tip": "Vito is all about the classic Italian flavors.",
+      "image": "subs/Vito.png"
+    },
+    {
+      "name": "#6 The Veggie",
+      "ingredients": [
+        "Provolone (Double)",
+        "Avocado Spread",
+        "Cucumber",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Great vegetarian option; keep avocado spread fresh.",
+      "image": "subs/Veggie.png"
+    }
+  ],
+  "Favorites": [
+    {
+      "name": "#7 Spicy East Coast Italian",
+      "ingredients": [
+        "Vito (Double)",
+        "Provolone Cheese",
+        "Jimmy Peppers",
+        "Onion",
+        "Mayo",
+        "Oil & Vinegar",
+        "Oregano-Basil",
+        "Lettuce",
+        "Tomato"
+      ],
+      "tip": "Jimmy Peppers first so they blend with the meat flavors.",
+      "image": "subs/SpicyItalian.png"
+    },
+    {
+      "name": "#8 Billy Club",
+      "ingredients": [
+        "Roast Beef",
+        "Ham",
+        "Provolone Cheese",
+        "Yellow Mustard",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Yellow mustard goes lightly so as not to overpower.",
+      "image": "subs/BillyClub.png"
+    },
+    {
+      "name": "#9 Italian Night Club",
+      "ingredients": [
+        "Vito",
+        "Ham",
+        "Provolone Cheese",
+        "Onion",
+        "Oil & Vinegar",
+        "Oregano-Basil",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Evenly distribute meats for balanced bites.",
+      "image": "subs/ItalianNight.png"
+    },
+    {
+      "name": "#10 Hunter's Club",
+      "ingredients": [
+        "Roast Beef (Double)",
+        "Provolone Cheese",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Layer the roast beef carefully so it fits properly.",
+      "image": "subs/Hunters.png"
+    },
+    {
+      "name": "#11 Country Club",
+      "ingredients": [
+        "Turkey",
+        "Ham",
+        "Provolone Cheese",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Classic combo, ensure fresh turkey and ham.",
+      "image": "subs/Country.png"
+    },
+    {
+      "name": "#12 Beach Club",
+      "ingredients": [
+        "Turkey",
+        "Provolone (Double)",
+        "Avocado Spread",
+        "Cucumber",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Fresh cucumbers for that beachy crunch.",
+      "image": "subs/Beach.png"
+    },
+    {
+      "name": "#13 Jimmy Cubano",
+      "ingredients": [
+        "Bacon",
+        "Ham",
+        "Provolone Cheese",
+        "Sliced Pickles",
+        "Yellow Mustard",
+        "Mayo"
+      ],
+      "tip": "Think Cuban sandwich style: don't skimp on pickles.",
+      "image": "subs/Cubano.png"
+    },
+    {
+      "name": "#14 Bootlegger Club",
+      "ingredients": [
+        "Roast Beef",
+        "Turkey",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Great alternative if you want two meats but not all the extras.",
+      "image": "subs/Bootlegger.png"
+    },
+    {
+      "name": "#15 Club Tuna",
+      "ingredients": [
+        "Tuna Salad",
+        "Provolone (Double)",
+        "Cucumber",
+        "Lettuce",
+        "Tomato"
+      ],
+      "tip": "Provolone (Double) is key for that classic taste.",
+      "image": "subs/ClubTuna.png"
+    },
+    {
+      "name": "#16 Club Lulu",
+      "ingredients": [
+        "Turkey",
+        "Bacon",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Bacon crispness is important here.",
+      "image": "subs/ClubLulu.png"
+    },
+    {
+      "name": "#17 Ultimate Porker",
+      "ingredients": [
+        "Ham",
+        "Bacon",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Stack ham neatly on top of bacon.",
+      "image": "subs/Porker.png"
+    },
+    {
+      "name": "J.J. Gargantuan",
+      "ingredients": [
+        "Vito",
+        "Ham",
+        "Roast Beef",
+        "Turkey",
+        "Provolone Cheese",
+        "Jimmy Peppers",
+        "Onion",
+        "Oil & Vinegar",
+        "Oregano-Basil",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Extra large. Balance all those meats carefully!",
+      "image": "subs/Gargantuan.png"
+    },
+    {
+      "name": "J.J.B.L.T.",
+      "ingredients": [
+        "Bacon",
+        "Lettuce",
+        "Tomato",
+        "Mayo"
+      ],
+      "tip": "Quick and simple; crisp bacon is essential.",
+      "image": "subs/BLT.png"
+    }
+  ],
+  "Toasted (Hot Sandwiches)": [
+    {
+      "name": "Chicken Bacon Ranch",
+      "ingredients": [
+        "All-Natural Chicken",
+        "Bacon",
+        "Provolone Cheese",
+        "Ranch",
+        "Lettuce",
+        "Tomato",
+        "Onion",
+        "Mayo"
+      ],
+      "tip": "Toasting melts the cheese and blends ranch with bacon flavor.",
+      "image": "subs/ChickenBacon.png"
+    },
+    {
+      "name": "Ultimate Italian",
+      "ingredients": [
+        "Vito",
+        "Ham (Double)",
+        "Bacon",
+        "Parmesan Cheese",
+        "Provolone Cheese",
+        "Lettuce",
+        "Tomato",
+        "Onion",
+        "Mayo",
+        "Oregano-Basil",
+        "Oil & Vinegar"
+      ],
+      "tip": "Balance two cheese types carefully—don't overload.",
+      "image": "subs/UltimateItalian.png"
+    },
+    {
+      "name": "Roast Beef & Cheddar",
+      "ingredients": [
+        "Roast Beef (Double)",
+        "Cheddar Cheese",
+        "Horseradish Sauce",
+        "Crispy Fried Onions",
+        "Lettuce",
+        "Tomato",
+        "Onion",
+        "Mayo"
+      ],
+      "tip": "Horseradish can be strong; moderate the amount.",
+      "image": "subs/RoastCheddar.png"
+    }
+  ]
+}

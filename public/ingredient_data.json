@@ -1,0 +1,176 @@
+{
+  "Ham": {
+    "category": "Meats",
+    "image": "Ham.png"
+  },
+  "Lettuce": {
+    "category": "Veggies",
+    "image": "Lettuce.png"
+  },
+  "Tomato": {
+    "category": "Veggies",
+    "image": "Tomato.png"
+  },
+  "Mayo": {
+    "category": "Condiments",
+    "image": "Mayo.png"
+  },
+  "Roast Beef": {
+    "category": "Meats",
+    "image": "RoastBeef.png"
+  },
+  "Cucumber": {
+    "category": "Veggies",
+    "image": "Cucumber.png"
+  },
+  "Turkey": {
+    "category": "Meats",
+    "image": "Turkey.png"
+  },
+  "Vito": {
+    "category": "Meats",
+    "image": "Vito.png"
+  },
+  "Onion": {
+    "category": "Veggies",
+    "image": "Onion.png"
+  },
+  "Avocado Spread": {
+    "category": "Condiments",
+    "image": "AvocadoSpread.png"
+  },
+  "Cheddar Cheese": {
+    "category": "Cheese",
+    "image": "Cheddar.png"
+  },
+  "Ranch": {
+    "category": "Condiments",
+    "image": "Ranch.png"
+  },
+  "Horseradish Sauce": {
+    "category": "Condiments",
+    "image": "Horseradish.png"
+  },
+  "Crispy Fried Onions": {
+    "category": "Veggies",
+    "image": "FriedOnions.png"
+  },
+  "Garlic Herb Wrap": {
+    "category": "Wraps",
+    "image": "Herb.png",
+    "is_lto": false
+  },
+  "Flour Wrap": {
+    "category": "Wraps",
+    "image": "Flour.png",
+    "is_lto": false
+  },
+  "Caesar Dressing": {
+    "category": "Condiments",
+    "image": "CaesarDressing.png"
+  },
+  "Kickin' Ranch": {
+    "category": "Condiments",
+    "image": "KickinRanch.png"
+  },
+  "Bacon x2": {
+    "category": "Meats",
+    "image": "Bacon.png",
+    "is_lto": false
+  },
+  "Bacon x3": {
+    "category": "Meats",
+    "image": "Bacon.png",
+    "is_lto": false
+  },
+  "Bacon x4": {
+    "category": "Meats",
+    "image": "Bacon.png",
+    "is_lto": false
+  },
+  "Ham x2": {
+    "category": "Meats",
+    "image": "Ham.png",
+    "is_lto": false
+  },
+  "Provolone x2": {
+    "category": "Cheese",
+    "image": "Provolone.png",
+    "is_lto": false
+  },
+  "Roast Beef x2": {
+    "category": "Meats",
+    "image": "RoastBeef.png",
+    "is_lto": false
+  },
+  "Vito x2": {
+    "category": "Meats",
+    "image": "Vito.png",
+    "is_lto": false
+  },
+  "Bacon x6": {
+    "category": "Meats",
+    "image": "Bacon.png",
+    "is_lto": false
+  },
+  "Provolone": {
+    "category": "Cheese",
+    "image": "Provolone.png",
+    "is_lto": false
+  },
+  "Parmesan": {
+    "category": "Cheese",
+    "image": "Parmesan.png",
+    "is_lto": false
+  },
+  "Croutons": {
+    "category": "Condiments",
+    "image": "Croutons.png",
+    "is_lto": false
+  },
+  "Marinara": {
+    "category": "Condiments",
+    "image": "Marinara.png",
+    "is_lto": true
+  },
+  "Mozzarella": {
+    "category": "Cheese",
+    "image": "Mozzarella.png",
+    "is_lto": true
+  },
+  "Pickles": {
+    "category": "Veggies",
+    "image": "Pickles.png",
+    "is_lto": false
+  },
+  "Chicken": {
+    "category": "Meats",
+    "image": "Chicken.png",
+    "is_lto": false
+  },
+  "Sauce": {
+    "category": "Condiments",
+    "image": "Oil.png",
+    "is_lto": false
+  },
+  "Peppers": {
+    "category": "Veggies",
+    "image": "Peppers.png",
+    "is_lto": false
+  },
+  "Mustard": {
+    "category": "Condiments",
+    "image": "Mustard.png",
+    "is_lto": false
+  },
+  "Tuna": {
+    "category": "Meats",
+    "image": "TunaSalad.png",
+    "is_lto": false
+  },
+  "Shake": {
+    "category": "Condiments",
+    "image": "Basil.png",
+    "is_lto": false
+  }
+}

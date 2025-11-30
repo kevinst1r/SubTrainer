@@ -1,6 +1,7 @@
 {
-    "sort_mode": "category",
-    "ingredient_image_size": 64,
-    "ui_text_size": 20,
-    "ingredient_text_size": 15
+  "sort_mode": "category",
+  "ingredient_image_size": 64,
+  "ui_text_size": 20,
+  "ingredient_text_size": 15,
+  "tip_icon": "\ud83d\udca1"
 }

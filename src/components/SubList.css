@@ -16,24 +16,7 @@
 }
 
 .list-container {
-  max-height: 400px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #4285f4 #333;
-}
-
-.list-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.list-container::-webkit-scrollbar-track {
-  background: #333;
-  border-radius: 4px;
-}
-
-.list-container::-webkit-scrollbar-thumb {
-  background-color: #4285f4;
-  border-radius: 4px;
+  /* Removed fixed height to allow dynamic expansion */
 }
 
 .list-container ul {
@@ -83,9 +66,7 @@
 }
 
 @media (max-width: 768px) {
-  .list-container {
-    max-height: 300px;
-  }
+  /* Mobile styles adjustments if needed */
 }
 
 @media (max-width: 480px) {

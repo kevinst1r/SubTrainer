@@ -1,12 +1,13 @@
 import React from 'react';
 import './SubDetails.css';
-import { Sub, INGREDIENT_INFO } from '../utils/dataUtils';
+import { Sub, IngredientData } from '../utils/dataUtils';
 
 interface SubDetailsProps {
   sub: Sub;
+  ingredientData: IngredientData;
 }
 
-const SubDetails: React.FC<SubDetailsProps> = ({ sub }) => {
+const SubDetails: React.FC<SubDetailsProps> = ({ sub, ingredientData }) => {
   return (
     <div className="sub-details">
       <h2>{sub.name}</h2>
@@ -36,9 +37,9 @@ const SubDetails: React.FC<SubDetailsProps> = ({ sub }) => {
           {sub.ingredients.map((ingredient, index) => (
             <li key={`${ingredient}-${index}`} className="ingredient-item">
               <div className="ingredient-icon">
-                {INGREDIENT_INFO[ingredient] && (
+                {ingredientData[ingredient] && (
                   <img 
-                    src={`/images/${INGREDIENT_INFO[ingredient].image}`} 
+                    src={`/images/${ingredientData[ingredient].image}`} 
                     alt={ingredient}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -48,7 +49,12 @@ const SubDetails: React.FC<SubDetailsProps> = ({ sub }) => {
                   />
                 )}
               </div>
-              <span className="ingredient-name">{ingredient}</span>
+              <span className="ingredient-name">
+                {ingredient}
+                {ingredientData[ingredient]?.is_lto && (
+                  <span className="lto-star" title="Limited Time Offer">★</span>
+                )}
+              </span>
             </li>
           ))}
         </ul>

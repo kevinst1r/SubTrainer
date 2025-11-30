@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './SubQuiz.css';
-import { Sub, Ingredient, extractSandwichNumber, cleanSandwichName } from '../utils/dataUtils';
+import { Sub, Ingredient, SubData, extractSandwichNumber, cleanSandwichName } from '../utils/dataUtils';
 
 interface SubQuizProps {
   allSubs: Sub[];
+  subData: SubData;
   ingredientInfo: Record<string, Ingredient>;
   categories: string[];
   onExit?: () => void; // Add prop for exit callback
+  score: { correct: number; total: number };
+  setScore: React.Dispatch<React.SetStateAction<{ correct: number; total: number }>>;
 }
 
 type QuizMode = 'guess-ingredients' | 'guess-sub' | 'guess-number' | 'guess-sub-by-number';
@@ -15,15 +18,54 @@ interface IngredientSelectionState {
   [ingredient: string]: boolean;
 }
 
-const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, onExit }) => {
+interface GroupedIngredient {
+  baseName: string;
+  variants: string[];
+  category: string;
+  image: string;
+  is_lto: boolean;
+}
+
+const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, categories, onExit, score, setScore }) => {
   // Quiz modes
   const [quizMode, setQuizMode] = useState<QuizMode>('guess-ingredients');
   const [currentSub, setCurrentSub] = useState<Sub | null>(null);
   const [selectedIngredients, setSelectedIngredients] = useState<IngredientSelectionState>({});
   const [showResults, setShowResults] = useState<boolean>(false);
-  const [score, setScore] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 });
+  const [activePopover, setActivePopover] = useState<string | null>(null);
   
-  // Category filtering
+  // Sub Category filtering
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const categoryMenuRef = useRef<HTMLDivElement>(null);
+
+  // Initialize selected sub categories
+  useEffect(() => {
+    if (Object.keys(subData).length > 0 && selectedSubCategories.length === 0) {
+      setSelectedSubCategories(Object.keys(subData));
+    }
+  }, [subData]);
+
+  // Handle clicking outside category menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryMenuRef.current && !categoryMenuRef.current.contains(event.target as Node)) {
+        setShowCategoryMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter subs based on selected categories
+  const filteredSubs = useMemo(() => {
+    if (selectedSubCategories.length === 0) return [];
+    return Object.entries(subData)
+      .filter(([category]) => selectedSubCategories.includes(category))
+      .flatMap(([, subs]) => subs);
+  }, [subData, selectedSubCategories]);
+
+  // Category filtering (Ingredients)
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortAlphabetically, setSortAlphabetically] = useState<boolean>(false);
   
@@ -34,25 +76,81 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
   // Number guessing options
   const [numberOptions, setNumberOptions] = useState<string[]>([]);
   const [selectedNumberOption, setSelectedNumberOption] = useState<string | null>(null);
+
+  // Zoom state
+  const [zoomLevel, setZoomLevel] = useState<number>(() => {
+    const saved = localStorage.getItem('subQuizZoom');
+    return saved ? parseFloat(saved) : 1.0;
+  });
+
+  // Group ingredients by base name
+  const groupedIngredients = useMemo(() => {
+    const groups: Record<string, GroupedIngredient> = {};
+
+    Object.entries(ingredientInfo).forEach(([key, info]) => {
+      // Normalize name: remove " xN" suffix
+      const baseName = key.replace(/ x\d+$/, '');
+      
+      if (!groups[baseName]) {
+        groups[baseName] = {
+          baseName,
+          variants: [],
+          category: info.category,
+          image: info.image,
+          is_lto: !!info.is_lto
+        };
+      }
+      
+      groups[baseName].variants.push(key);
+      
+      // If the current key is the base name, update info to ensure accuracy
+      if (key === baseName) {
+        groups[baseName].category = info.category;
+        groups[baseName].image = info.image;
+        groups[baseName].is_lto = !!info.is_lto;
+      }
+    });
+
+    // Sort variants: Base first, then x2, x3...
+    Object.values(groups).forEach(group => {
+      group.variants.sort((a, b) => {
+        if (a === group.baseName) return -1;
+        if (b === group.baseName) return 1;
+        return a.localeCompare(b, undefined, { numeric: true });
+      });
+    });
+
+    return Object.values(groups);
+  }, [ingredientInfo]);
+
+  const handleZoomIn = () => setZoomLevel(prev => Math.min(Math.round((prev + 0.1) * 10) / 10, 2.0)); // Cap at 2x
+  const handleZoomOut = () => setZoomLevel(prev => Math.max(Math.round((prev - 0.1) * 10) / 10, 0.5)); // Floor at 0.5x
+  const handleResetZoom = () => setZoomLevel(1.0);
   
   // Get a random sub for the quiz
   const getRandomSub = () => {
-    if (allSubs.length === 0) return null;
+    const pool = filteredSubs.length > 0 ? filteredSubs : allSubs;
+    if (pool.length === 0) return null;
     
     // For number-based quizzes, we need subs with numbers
     if (quizMode === 'guess-number' || quizMode === 'guess-sub-by-number') {
-      const subsWithNumbers = allSubs.filter(sub => extractSandwichNumber(sub.name) !== null);
+      const subsWithNumbers = pool.filter(sub => extractSandwichNumber(sub.name) !== null);
       if (subsWithNumbers.length === 0) return null;
       const randomIndex = Math.floor(Math.random() * subsWithNumbers.length);
       return subsWithNumbers[randomIndex];
     } else {
-      const randomIndex = Math.floor(Math.random() * allSubs.length);
-      return allSubs[randomIndex];
+      const randomIndex = Math.floor(Math.random() * pool.length);
+      return pool[randomIndex];
     }
   };
   
   // Initialize the quiz with a random sub
   const initializeQuiz = () => {
+    // If we're changing filters, we might want to re-roll even if we have a current sub?
+    // Actually, usually we call this for "Next Question".
+    // If filteredSubs changed, we might be in an invalid state if we don't re-roll, 
+    // but this function is imperative.
+    
     const newSub = getRandomSub();
     if (!newSub) return;
     
@@ -65,6 +163,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
       initialIngredientState[ingredient] = false;
     });
     setSelectedIngredients(initialIngredientState);
+    setActivePopover(null);
     
     // Generate options based on quiz type
     if (quizMode === 'guess-sub') {
@@ -140,17 +239,44 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
   // Exit fullscreen when changing quiz mode
   const handleModeChange = (mode: QuizMode) => {
     setQuizMode(mode);
-    setScore({ correct: 0, total: 0 });
   };
   
   // Handle ingredient selection
-  const handleIngredientClick = (ingredient: string) => {
+  const handleIngredientClick = (groupBaseName: string, variant?: string) => {
     if (showResults) return;
     
-    setSelectedIngredients(prev => ({
-      ...prev,
-      [ingredient]: !prev[ingredient]
-    }));
+    const group = groupedIngredients.find(g => g.baseName === groupBaseName);
+    if (!group) return;
+
+    // If variant is provided (from popover)
+    if (variant) {
+        const newSelected = { ...selectedIngredients };
+        
+        // Clear all variants of this group
+        group.variants.forEach(v => delete newSelected[v]);
+
+        // If not clearing, select the specific variant (Radio behavior)
+        if (variant !== '__CLEAR__') {
+            newSelected[variant] = true;
+        }
+
+        setSelectedIngredients(newSelected);
+        setActivePopover(null);
+        return;
+    }
+
+    // Main card click
+    if (group.variants.length > 1) {
+        // Toggle popover
+        setActivePopover(activePopover === groupBaseName ? null : groupBaseName);
+    } else {
+        // Single variant - toggle directly
+        const singleVariant = group.variants[0];
+        setSelectedIngredients(prev => ({
+            ...prev,
+            [singleVariant]: !prev[singleVariant]
+        }));
+    }
   };
   
   // Check if an ingredient is correctly selected
@@ -244,35 +370,41 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
   };
   
   // Get filtered and sorted ingredients
-  const getFilteredIngredients = (): string[] => {
+  const getFilteredIngredients = (): GroupedIngredient[] => {
     // Filter by category
-    const filteredIngredients = Object.entries(ingredientInfo)
-      .filter(([_, info]) => selectedCategory === 'All' || info.category === selectedCategory)
-      .map(([name]) => name);
+    const filtered = groupedIngredients
+      .filter(group => {
+        if (selectedCategory === 'All') return true;
+        if (selectedCategory === 'LTO') return group.is_lto;
+        return group.category === selectedCategory;
+      });
     
     // Sort by category then alphabetically or just alphabetically
-    if (sortAlphabetically) {
-      return filteredIngredients.sort((a, b) => a.localeCompare(b));
-    } else {
-      return filteredIngredients.sort((a, b) => {
+    return filtered.sort((a, b) => {
+      if (sortAlphabetically) {
+        return a.baseName.localeCompare(b.baseName);
+      } else {
         // First sort by category
-        const catA = ingredientInfo[a].category;
-        const catB = ingredientInfo[b].category;
-        const catCompare = catA.localeCompare(catB);
+        const catCompare = a.category.localeCompare(b.category);
         
         // If categories are the same, sort alphabetically
         if (catCompare === 0) {
-          return a.localeCompare(b);
+          return a.baseName.localeCompare(b.baseName);
         }
         return catCompare;
-      });
-    }
+      }
+    });
   };
   
   // Initialize on component mount
   useEffect(() => {
+    // Only initialize if we have categories selected or if it's the first run
+    // filteredSubs will be empty initially until useEffect runs, but allSubs is there.
+    // We should wait for selectedSubCategories to be populated if subData is present.
+    if (Object.keys(subData).length > 0 && selectedSubCategories.length === 0) return;
+    
     initializeQuiz();
-  }, [quizMode]);
+  }, [quizMode, selectedSubCategories]); // Re-run when categories change
   
   // Add and remove body class to prevent scrolling
   useEffect(() => {
@@ -305,12 +437,78 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
   
   // Regular layout
   return (
-    <div className={`sub-quiz ${showResults ? 'showing-results' : ''}`}>
+    <div 
+      className={`sub-quiz ${showResults ? 'showing-results' : ''}`}
+      style={{
+        transform: `scale(${zoomLevel})`,
+        transformOrigin: 'top left',
+        width: `${100 / zoomLevel}vw`,
+        height: `${100 / zoomLevel}vh`
+      }}
+    >
       <div className="compact-header">
-        <div className="back-button-container">
+        <div className="back-button-container" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button className="quiz-back-button" onClick={onExit}>
             &larr; Back
           </button>
+          
+          <div className="sub-category-filter" ref={categoryMenuRef} style={{ position: 'relative' }}>
+            <button 
+              className="quiz-back-button" 
+              onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+              title="Filter Sub Categories"
+            >
+              ⚙️ Filter
+            </button>
+            
+            {showCategoryMenu && (
+              <div className="category-dropdown-menu" style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                backgroundColor: '#333',
+                border: '1px solid #555',
+                borderRadius: '4px',
+                padding: '0.5rem',
+                zIndex: 1000,
+                width: '200px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                marginTop: '0.2rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem', borderBottom: '1px solid #444', paddingBottom: '0.3rem' }}>
+                    <button 
+                        style={{ background: 'none', border: 'none', color: '#4285f4', cursor: 'pointer', fontSize: '0.8rem', padding: 0 }}
+                        onClick={() => setSelectedSubCategories(Object.keys(subData))}
+                    >
+                        Select All
+                    </button>
+                </div>
+                
+                {Object.keys(subData).map(category => (
+                  <div key={category} style={{ display: 'flex', alignItems: 'center', marginBottom: '0.3rem' }}>
+                    <input 
+                      type="checkbox" 
+                      id={`cat-${category}`} 
+                      checked={selectedSubCategories.includes(category)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedSubCategories(prev => [...prev, category]);
+                        } else {
+                          // Prevent deselecting the last item
+                          if (selectedSubCategories.length > 1) {
+                            setSelectedSubCategories(prev => prev.filter(c => c !== category));
+                          }
+                        }
+                      }}
+                      style={{ marginRight: '0.5rem' }}
+                      disabled={!selectedSubCategories.includes(category) ? false : (selectedSubCategories.length <= 1)}
+                    />
+                    <label htmlFor={`cat-${category}`} style={{ color: 'white', fontSize: '0.9rem', cursor: 'pointer', flex: 1 }}>{category}</label>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       
         <div className="quiz-question">
@@ -323,8 +521,21 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
         </div>
         
         <div className="compact-controls">
+          <button 
+            className="score-reset-button" 
+            onClick={() => setScore({ correct: 0, total: 0 })}
+            title="Reset Score"
+            style={{ marginRight: '8px', background: 'none', border: '1px solid #666', color: '#aaa', borderRadius: '4px', cursor: 'pointer', padding: '2px 6px', fontSize: '0.8rem' }}
+          >
+            Reset
+          </button>
           <div className="quiz-score">
             Score: {score.correct}/{score.total}
+          </div>
+          <div className="zoom-controls">
+            <button onClick={handleZoomOut} title="Zoom Out" className="zoom-btn">-</button>
+            <button onClick={handleResetZoom} title="Reset Zoom" className="zoom-btn reset">R</button>
+            <button onClick={handleZoomIn} title="Zoom In" className="zoom-btn">+</button>
           </div>
         </div>
         
@@ -358,69 +569,232 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
         </div>
       </div>
       
+      <div className="quiz-scroll-area">
       {quizMode === 'guess-ingredients' && (
         <>
-          <div className="ingredient-filters">
-            <div className="category-filter">
-              <label htmlFor="category-filter-compact">Category:</label>
-              <select 
-                id="category-filter-compact" 
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="All">All</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="sort-toggle">
-              <input 
-                type="checkbox" 
-                id="sort-alpha-compact"
-                checked={sortAlphabetically}
-                onChange={() => setSortAlphabetically(!sortAlphabetically)}
-              />
-              <label htmlFor="sort-alpha-compact">Sort Alphabetically</label>
-            </div>
-          </div>
-          
-          <div className="quiz-ingredients">
-            {getFilteredIngredients().map(ingredient => {
-              const info = ingredientInfo[ingredient];
-              const ingredientStatus = isIngredientCorrect(ingredient);
-              const shouldHighlight = showResults && (ingredientStatus === 'correct' || ingredientStatus === 'missing' || ingredientStatus === 'extra');
+          {!showResults ? (
+            <>
+              <div className="ingredient-filters">
+                <div className="category-filter">
+                  <label htmlFor="category-filter-compact">Category:</label>
+                  <select 
+                    id="category-filter-compact" 
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="sort-toggle">
+                  <input 
+                    type="checkbox" 
+                    id="sort-alpha-compact"
+                    checked={sortAlphabetically}
+                    onChange={() => setSortAlphabetically(!sortAlphabetically)}
+                  />
+                  <label htmlFor="sort-alpha-compact">Sort Alphabetically</label>
+                </div>
+              </div>
               
-              return (
-                <button
-                  key={ingredient}
-                  className={`
-                    ingredient-card 
-                    ${selectedIngredients[ingredient] ? 'selected' : ''}
-                    ${shouldHighlight ? ingredientStatus : ''}
-                  `}
-                  onClick={() => handleIngredientClick(ingredient)}
-                  disabled={showResults}
-                >
-                  {info.image && (
-                    <div className="ingredient-image">
-                      <img 
-                        src={`/images/${info.image}`} 
-                        alt={ingredient}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = '/icon.png';
-                          target.onerror = null;
-                        }}
-                      />
+              <div className="quiz-ingredients">
+                {getFilteredIngredients().map(group => {
+                  const isSelected = group.variants.some(v => selectedIngredients[v]);
+                  const selectedVariant = group.variants.find(v => selectedIngredients[v]);
+                  
+                  // Determine display badge
+                  let badge = null;
+                  if (isSelected) {
+                     if (selectedVariant && selectedVariant !== group.baseName) {
+                        badge = selectedVariant.replace(group.baseName, '').trim();
+                     } 
+                     // Only show checkmark if it's the base name, otherwise the quantity is enough
+                     // But if the badge is empty (e.g. selectedVariant === baseName), show check
+                     if (!badge) badge = '✓';
+                  }
+
+                  return (
+                    <div 
+                        key={group.baseName} 
+                        className="ingredient-card-wrapper" 
+                        style={{ position: 'relative', height: '100%' }}
+                    >
+                        {activePopover === group.baseName && (
+                            <div className="ingredient-popover">
+                                <button 
+                                    className={`popover-option ${!isSelected ? 'selected' : ''}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleIngredientClick(group.baseName, '__CLEAR__');
+                                    }}
+                                >
+                                    0
+                                </button>
+                                {group.variants.map(variant => {
+                                    // Label: if variant is just "Bacon" (base), show "1x" or "Reg"
+                                    // If "Bacon x2", show "x2"
+                                    let variantLabel = variant === group.baseName ? "1x" : variant.replace(group.baseName, '').trim();
+                                    if (!variantLabel) variantLabel = "1x";
+
+                                    return (
+                                        <button 
+                                            key={variant}
+                                            className={`popover-option ${selectedIngredients[variant] ? 'selected' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleIngredientClick(group.baseName, variant);
+                                            }}
+                                        >
+                                            {variantLabel}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        <button
+                          className={`
+                            ingredient-card 
+                            ${isSelected ? 'selected' : ''}
+                          `}
+                          onClick={() => handleIngredientClick(group.baseName)}
+                          style={{ width: '100%', height: '100%' }}
+                        >
+                          {group.image && (
+                            <div className="ingredient-image">
+                              <img 
+                                src={`/images/${group.image}`} 
+                                alt={group.baseName}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = '/icon.png';
+                                  target.onerror = null;
+                                }}
+                              />
+                            </div>
+                          )}
+                          <span className="ingredient-name">
+                            {group.baseName}
+                            {group.is_lto && <span className="lto-star">★</span>}
+                          </span>
+                          {badge && <span className="ingredient-badge">{badge}</span>}
+                        </button>
                     </div>
-                  )}
-                  <span className="ingredient-name">{ingredient}</span>
-                </button>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="quiz-results-container">
+               <div className="result-section">
+                  <h4 className="result-heading correct">Correct Ingredients</h4>
+                  <div className="quiz-ingredients result-grid">
+                    {currentSub.ingredients
+                      .filter(ingredient => selectedIngredients[ingredient])
+                      .map(ingredient => {
+                        const info = ingredientInfo[ingredient];
+                        return (
+                          <div key={ingredient} className="ingredient-card correct static">
+                             {info.image && (
+                              <div className="ingredient-image">
+                                <img 
+                                  src={`/images/${info.image}`} 
+                                  alt={ingredient} 
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/icon.png';
+                                    target.onerror = null;
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <span className="ingredient-name">
+                              {ingredient}
+                              {info.is_lto && <span className="lto-star">★</span>}
+                            </span>
+                          </div>
+                        );
+                      })}
+                      {currentSub.ingredients.filter(ingredient => selectedIngredients[ingredient]).length === 0 && (
+                        <p className="empty-result-message">None</p>
+                      )}
+                  </div>
+               </div>
+
+               <div className="result-section">
+                  <h4 className="result-heading missing">Missing Ingredients</h4>
+                  <div className="quiz-ingredients result-grid">
+                    {currentSub.ingredients
+                      .filter(ingredient => !selectedIngredients[ingredient])
+                      .map(ingredient => {
+                        const info = ingredientInfo[ingredient];
+                        return (
+                          <div key={ingredient} className="ingredient-card missing static">
+                             {info.image && (
+                              <div className="ingredient-image">
+                                <img 
+                                  src={`/images/${info.image}`} 
+                                  alt={ingredient} 
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/icon.png';
+                                    target.onerror = null;
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <span className="ingredient-name">
+                              {ingredient}
+                              {info.is_lto && <span className="lto-star">★</span>}
+                            </span>
+                          </div>
+                        );
+                      })}
+                      {currentSub.ingredients.filter(ingredient => !selectedIngredients[ingredient]).length === 0 && (
+                        <p className="empty-result-message">None</p>
+                      )}
+                  </div>
+               </div>
+
+               <div className="result-section">
+                  <h4 className="result-heading extra">Extra Ingredients Selected</h4>
+                  <div className="quiz-ingredients result-grid">
+                    {Object.entries(selectedIngredients)
+                      .filter(([ingredient, isSelected]) => isSelected && !currentSub.ingredients.includes(ingredient))
+                      .map(([ingredient]) => {
+                        const info = ingredientInfo[ingredient];
+                        return (
+                          <div key={ingredient} className="ingredient-card extra static">
+                             {info.image && (
+                              <div className="ingredient-image">
+                                <img 
+                                  src={`/images/${info.image}`} 
+                                  alt={ingredient} 
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/icon.png';
+                                    target.onerror = null;
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <span className="ingredient-name">
+                              {ingredient}
+                              {info.is_lto && <span className="lto-star">★</span>}
+                            </span>
+                          </div>
+                        );
+                      })}
+                      {Object.entries(selectedIngredients)
+                        .filter(([ingredient, isSelected]) => isSelected && !currentSub.ingredients.includes(ingredient)).length === 0 && (
+                        <p className="empty-result-message">None</p>
+                      )}
+                  </div>
+               </div>
+            </div>
+          )}
         </>
       )}
       
@@ -445,7 +819,10 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
                         />
                       </div>
                     )}
-                    <span className="ingredient-name">{ingredient}</span>
+                    <span className="ingredient-name">
+                      {ingredient}
+                      {info && info.is_lto && <span className="lto-star">★</span>}
+                    </span>
                   </div>
                 );
               })}
@@ -459,7 +836,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
                 <button
                   key={subName}
                   className={`
-                    sub-option
+                    sub-option text-only
                     ${selectedSubOption === subName ? 'selected' : ''}
                     ${showResults && subName === currentSub.name ? 'correct' : ''}
                     ${showResults && selectedSubOption === subName && subName !== currentSub.name ? 'incorrect' : ''}
@@ -468,19 +845,6 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
                   disabled={showResults}
                 >
                   <div className="sub-option-content">
-                    {sub && sub.image && (
-                      <div className="sub-option-image">
-                        <img 
-                          src={`/images/${sub.image}`} 
-                          alt={subName}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/icon.png';
-                            target.onerror = null;
-                          }}
-                        />
-                      </div>
-                    )}
                     <span className="sub-option-name">{subName}</span>
                   </div>
                 </button>
@@ -493,8 +857,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
       {quizMode === 'guess-number' && (
         <>
           <div className="current-ingredients guess-sub-mode">
-            <div className="sandwich-info">
-              <h3>{cleanSandwichName(currentSub.name)}</h3>
+            <div className="sandwich-info horizontal-layout">
               {currentSub.image && (
                 <div className="sandwich-image large-thumbnail">
                   <img 
@@ -511,7 +874,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
             </div>
           </div>
           
-          <div className="number-options-grid">
+          <div className="sub-options-grid">
             {numberOptions.map(numberOption => (
               <button
                 key={numberOption}
@@ -535,10 +898,6 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
       
       {quizMode === 'guess-sub-by-number' && (
         <>
-          <div className="current-ingredients guess-sub-mode">
-            <h3>Sandwich Number: #{extractSandwichNumber(currentSub.name)}</h3>
-          </div>
-          
           <div className="sub-options-grid">
             {subOptions.map(subName => {
               const sub = findSubByName(subName);
@@ -576,7 +935,8 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
           </div>
         </>
       )}
-      
+      </div>
+
       {!showResults ? (
         <button 
           className="submit-button"
@@ -588,70 +948,28 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, ingredientInfo, categories, 
         </button>
       ) : (
         <div className="quiz-result-actions">
-          <div className="quiz-result">
             {quizMode === 'guess-ingredients' && (
-              <>
-                <p>
-                  Results for {currentSub.name}:
-                </p>
-                <div className="ingredient-results">
-                  <div className="result-category">
-                    <span className="result-heading correct">Correct Ingredients:</span>
-                    <ul className="result-list correct">
-                      {currentSub.ingredients
-                        .filter(ingredient => selectedIngredients[ingredient])
-                        .map(ingredient => (
-                          <li key={ingredient}>{ingredient}</li>
-                        ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="result-category">
-                    <span className="result-heading missing">Missing Ingredients:</span>
-                    <ul className="result-list missing">
-                      {currentSub.ingredients
-                        .filter(ingredient => !selectedIngredients[ingredient])
-                        .map(ingredient => (
-                          <li key={ingredient}>{ingredient}</li>
-                        ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="result-category">
-                    <span className="result-heading extra">Extra Ingredients Selected:</span>
-                    <ul className="result-list extra">
-                      {Object.entries(selectedIngredients)
-                        .filter(([ingredient, isSelected]) => isSelected && !currentSub.ingredients.includes(ingredient))
-                        .map(([ingredient]) => (
-                          <li key={ingredient}>{ingredient}</li>
-                        ))}
-                    </ul>
-                  </div>
-                </div>
-              </>
-            )}
-            
-            {quizMode === 'guess-sub' && (
-              <p>
-                The correct answer is: 
-                <span className="correct-sub">{currentSub.name}</span>
-              </p>
-            )}
-            
-            {quizMode === 'guess-number' && (
-              <p>
-                The correct number is: 
-                <span className="correct-sub">#{extractSandwichNumber(currentSub.name)}</span>
-              </p>
-            )}
-            
-            {quizMode === 'guess-sub-by-number' && (
-              <p>
-                The correct sandwich is: 
-                <span className="correct-sub">{cleanSandwichName(currentSub.name)}</span>
-              </p>
-            )}
+            <div className="quiz-result">
+              {(() => {
+                const correctIngredients = currentSub.ingredients;
+                const selectedCount = Object.values(selectedIngredients).filter(selected => selected).length;
+                const isCorrect = 
+                  selectedCount === correctIngredients.length &&
+                  correctIngredients.every(ingredient => selectedIngredients[ingredient]) &&
+                  Object.entries(selectedIngredients)
+                    .filter(([_, isSelected]) => isSelected)
+                    .every(([ingredient, _]) => correctIngredients.includes(ingredient));
+                
+                return (
+                  <p>
+                    {currentSub.name} <span style={{ color: isCorrect ? '#4caf50' : '#f44336', fontWeight: 'bold' }}>
+                      {isCorrect ? 'Correct' : 'Incorrect'}
+                    </span>
+                  </p>
+                );
+              })()}
           </div>
+          )}
           
           <button 
             className="next-question-btn"
