@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import './IngredientDisplay.css';
-import { Ingredient } from '../utils/dataUtils';
+import { Ingredient, getCategoryOrder } from '../utils/dataUtils';
 
 interface IngredientDisplayProps {
   categories: string[];
@@ -55,7 +55,11 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
         return a.displayName.localeCompare(b.displayName);
       }
       // Default 'category' sort: Sort by category first, then alphabetically
-      const catCompare = a.info.category.localeCompare(b.info.category);
+      const catA = a.info.is_lto ? "LTO" : a.info.category;
+      const catB = b.info.is_lto ? "LTO" : b.info.category;
+      
+      const catCompare = getCategoryOrder(catA) - getCategoryOrder(catB);
+      
       if (catCompare === 0) {
         return a.displayName.localeCompare(b.displayName);
       }

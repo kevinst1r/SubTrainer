@@ -88,5 +88,5 @@ class DataManager:
 
     def get_ingredient_categories(self):
         # Could be dynamic, but let's stick to the known ones for now + allow custom?
-        # The frontend defines: "All", "Wraps", "Meats", "Cheese", "Veggies", "Condiments", "LTO"
-        return ["Wraps", "Meats", "Cheese", "Veggies", "Condiments", "LTO"]
+        # The frontend defines: "All", "Wraps", "Vegetables", "Condiments", "Meats", "Cheese", "LTO"
+        return ["Wraps", "Vegetables", "Condiments", "Meats", "Cheese", "LTO"]

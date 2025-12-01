@@ -4,11 +4,11 @@
     "image": "Ham.png"
   },
   "Lettuce": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Lettuce.png"
   },
   "Tomato": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Tomato.png"
   },
   "Mayo": {
@@ -20,7 +20,7 @@
     "image": "RoastBeef.png"
   },
   "Cucumber": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Cucumber.png"
   },
   "Turkey": {
@@ -32,7 +32,7 @@
     "image": "Vito.png"
   },
   "Onion": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Onion.png"
   },
   "Avocado Spread": {
@@ -52,7 +52,7 @@
     "image": "Horseradish.png"
   },
   "Crispy Fried Onions": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "FriedOnions.png"
   },
   "Garlic Herb Wrap": {
@@ -139,7 +139,7 @@
     "is_lto": true
   },
   "Pickles": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Pickles.png",
     "is_lto": false
   },
@@ -154,7 +154,7 @@
     "is_lto": false
   },
   "Peppers": {
-    "category": "Veggies",
+    "category": "Vegetables",
     "image": "Peppers.png",
     "is_lto": false
   },

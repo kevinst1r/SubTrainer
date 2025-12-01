@@ -263,7 +263,7 @@
         "Provolone",
         "Chicken"
       ],
-      "tip": "Toasting melts the cheese and blends ranch with bacon flavor.",
+      "tip": "Toasted = 2x Bacon",
       "image": "subs/ChickenBacon.png"
     },
     {
@@ -281,7 +281,7 @@
         "Sauce",
         "Shake"
       ],
-      "tip": "Balance two cheese types carefully\u2014don't overload.",
+      "tip": "Toasted = 2x Bacon",
       "image": "subs/UltimateItalian.png"
     },
     {
@@ -296,7 +296,7 @@
         "Mayo",
         "Roast Beef x2"
       ],
-      "tip": "Horseradish can be strong; moderate the amount.",
+      "tip": "Crunchy onions!",
       "image": "subs/RoastCheddar.png"
     }
   ],
@@ -313,7 +313,7 @@
         "Croutons",
         "Chicken"
       ],
-      "tip": "Add mini croutons just before wrapping to maintain crunch.",
+      "tip": "(Insert Julius Caesar joke here)",
       "image": "subs/ChickenCaesarWrap.png"
     },
     {
@@ -329,7 +329,7 @@
         "Chicken",
         "Peppers"
       ],
-      "tip": "Apply Kickin' Ranch evenly to distribute the heat.",
+      "tip": "Don't forget the peppers!",
       "image": "subs/KickinRanchWrap.png"
     },
     {
@@ -346,7 +346,7 @@
         "Sauce",
         "Shake"
       ],
-      "tip": "Roll tightly to keep all ingredients secure.",
+      "tip": "#9 with Parmesan as a Wrap.",
       "image": "subs/TuscanWrap.png"
     }
   ],

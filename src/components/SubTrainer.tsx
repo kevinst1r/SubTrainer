@@ -32,7 +32,10 @@ const SubTrainer: React.FC<SubTrainerProps> = ({ subData, ingredientData }) => {
     const fetchSortingConfig = async () => {
       try {
         const config = await loadSortingConfig();
-        setSortingConfig(config);
+        setSortingConfig({
+          ...config,
+          tip_icon: config.tip_icon ?? "💡"
+        });
       } catch (error) {
         console.error('Error loading sorting config:', error);
       }

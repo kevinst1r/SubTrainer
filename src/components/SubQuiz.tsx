@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './SubQuiz.css';
-import { Sub, Ingredient, SubData, extractSandwichNumber, cleanSandwichName } from '../utils/dataUtils';
+import { Sub, Ingredient, SubData, extractSandwichNumber, cleanSandwichName, getCategoryOrder } from '../utils/dataUtils';
 
 interface SubQuizProps {
   allSubs: Sub[];
@@ -12,7 +12,7 @@ interface SubQuizProps {
   setScore: React.Dispatch<React.SetStateAction<{ correct: number; total: number }>>;
 }
 
-type QuizMode = 'guess-ingredients' | 'guess-sub' | 'guess-number' | 'guess-sub-by-number';
+  type QuizMode = 'guess-ingredients' | 'guess-sub' | 'guess-number' | 'guess-sub-by-number' | 'what-is-missing';
 
 interface IngredientSelectionState {
   [ingredient: string]: boolean;
@@ -76,6 +76,11 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
   // Number guessing options
   const [numberOptions, setNumberOptions] = useState<string[]>([]);
   const [selectedNumberOption, setSelectedNumberOption] = useState<string | null>(null);
+
+  // Missing ingredient options
+  const [missingIngredient, setMissingIngredient] = useState<string | null>(null);
+  const [missingOptions, setMissingOptions] = useState<string[]>([]);
+  const [selectedMissingOption, setSelectedMissingOption] = useState<string | null>(null);
 
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState<number>(() => {
@@ -172,12 +177,43 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
       generateNumberOptions(newSub);
     } else if (quizMode === 'guess-sub-by-number') {
       generateSubOptions(newSub);
+    } else if (quizMode === 'what-is-missing') {
+      // Select a random missing ingredient
+      if (newSub.ingredients.length > 0) {
+        const randomIndex = Math.floor(Math.random() * newSub.ingredients.length);
+        const missing = newSub.ingredients[randomIndex];
+        setMissingIngredient(missing);
+        generateMissingIngredientOptions(missing, newSub.ingredients);
+      }
     }
     
     setSelectedSubOption(null);
     setSelectedNumberOption(null);
+    setSelectedMissingOption(null);
   };
   
+  // Generate options for missing ingredient
+  const generateMissingIngredientOptions = (correctIngredient: string, currentIngredients: string[]) => {
+    // Get all available ingredients
+    const allIngredients = Object.keys(ingredientInfo);
+    
+    // Filter out ingredients that are already in the sub (including the correct one)
+    // We want distractors that are NOT in the sub
+    const possibleDistractors = allIngredients.filter(ing => !currentIngredients.includes(ing));
+    
+    // Select 3 random distractors
+    const randomOptions: string[] = [];
+    for (let i = 0; i < 3 && possibleDistractors.length > 0; i++) {
+      const randomIndex = Math.floor(Math.random() * possibleDistractors.length);
+      randomOptions.push(possibleDistractors[randomIndex]);
+      possibleDistractors.splice(randomIndex, 1);
+    }
+    
+    // Add correct option and shuffle
+    const finalOptions = [...randomOptions, correctIngredient];
+    setMissingOptions(shuffleArray(finalOptions));
+  };
+
   // Generate options for sub guessing
   const generateSubOptions = (correctSub: Sub) => {
     const correctName = correctSub.name;
@@ -279,25 +315,6 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
     }
   };
   
-  // Check if an ingredient is correctly selected
-  const isIngredientCorrect = (ingredient: string): string | null => {
-    if (!showResults) return null;
-    
-    const isSelected = selectedIngredients[ingredient];
-    const isCorrectIngredient = currentSub?.ingredients.includes(ingredient) || false;
-    
-    // Return a status string instead of just true/false
-    if (isSelected && isCorrectIngredient) {
-      return 'correct'; // Correctly selected an ingredient that belongs
-    } else if (!isSelected && !isCorrectIngredient) {
-      return 'none'; // Correctly NOT selected an ingredient that doesn't belong
-    } else if (!isSelected && isCorrectIngredient) {
-      return 'missing'; // Missing - should have been selected
-    } else {
-      return 'extra'; // Extra - selected but shouldn't have been
-    }
-  };
-  
   // Submit answers and show results
   const handleSubmit = () => {
     if (!currentSub) return;
@@ -344,6 +361,12 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
         correctAnswers = 1;
       }
       totalAnswers = 1;
+    } else if (quizMode === 'what-is-missing') {
+      // Check missing ingredient selection
+      if (selectedMissingOption === missingIngredient) {
+        correctAnswers = 1;
+      }
+      totalAnswers = 1;
     }
     
     setScore(prev => ({
@@ -364,6 +387,12 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
     setSelectedNumberOption(numberOption);
   };
   
+  // Handle missing option selection
+  const handleMissingOptionSelect = (option: string) => {
+    if (showResults) return;
+    setSelectedMissingOption(option);
+  };
+
   // Find sub object by name
   const findSubByName = (name: string) => {
     return allSubs.find(sub => sub.name === name);
@@ -385,7 +414,11 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
         return a.baseName.localeCompare(b.baseName);
       } else {
         // First sort by category
-        const catCompare = a.category.localeCompare(b.category);
+        // If it's an LTO item, treat it as "LTO" category for sorting
+        const catA = a.is_lto ? "LTO" : a.category;
+        const catB = b.is_lto ? "LTO" : b.category;
+        
+        const catCompare = getCategoryOrder(catA) - getCategoryOrder(catB);
         
         // If categories are the same, sort alphabetically
         if (catCompare === 0) {
@@ -443,7 +476,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
         transform: `scale(${zoomLevel})`,
         transformOrigin: 'top left',
         width: `${100 / zoomLevel}vw`,
-        height: `${100 / zoomLevel}vh`
+        height: `${100 / zoomLevel}dvh`
       }}
     >
       <div className="compact-header">
@@ -517,6 +550,7 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
             {quizMode === 'guess-sub' && 'Which sandwich contains these ingredients?'}
             {quizMode === 'guess-number' && `What is the number of: ${cleanSandwichName(currentSub.name)}?`}
             {quizMode === 'guess-sub-by-number' && `Which sandwich has number #${extractSandwichNumber(currentSub.name)}?`}
+            {quizMode === 'what-is-missing' && `What ingredient is missing from: ${currentSub.name}?`}
           </h3>
         </div>
         
@@ -564,6 +598,12 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
               onClick={() => handleModeChange('guess-sub-by-number')}
             >
               Guess Sub by Number
+            </button>
+            <button 
+              className={quizMode === 'what-is-missing' ? 'active' : ''} 
+              onClick={() => handleModeChange('what-is-missing')}
+            >
+              What's Missing?
             </button>
           </div>
         </div>
@@ -802,7 +842,24 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
         <>
           <div className="current-ingredients guess-sub-mode">
             <div className="quiz-ingredients-display">
-              {currentSub.ingredients.map(ingredient => {
+              {[...currentSub.ingredients]
+                .sort((a, b) => {
+                  const infoA = ingredientInfo[a];
+                  const infoB = ingredientInfo[b];
+                  
+                  if (!infoA || !infoB) return a.localeCompare(b);
+                  
+                  const catA = infoA.is_lto ? "LTO" : infoA.category;
+                  const catB = infoB.is_lto ? "LTO" : infoB.category;
+                  
+                  const catCompare = getCategoryOrder(catA) - getCategoryOrder(catB);
+                  
+                  if (catCompare === 0) {
+                    return a.localeCompare(b);
+                  }
+                  return catCompare;
+                })
+                .map(ingredient => {
                 const info = ingredientInfo[ingredient];
                 return (
                   <div key={ingredient} className="ingredient-card static">
@@ -831,7 +888,6 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
           
           <div className="sub-options-grid">
             {subOptions.map(subName => {
-              const sub = findSubByName(subName);
               return (
                 <button
                   key={subName}
@@ -935,14 +991,104 @@ const SubQuiz: React.FC<SubQuizProps> = ({ allSubs, subData, ingredientInfo, cat
           </div>
         </>
       )}
+
+      {quizMode === 'what-is-missing' && (
+        <>
+          <div className="current-ingredients guess-sub-mode">
+            <div className="quiz-ingredients-display">
+              {[...currentSub.ingredients]
+                .filter(ing => ing !== missingIngredient) // Exclude the missing one
+                .sort((a, b) => {
+                  const infoA = ingredientInfo[a];
+                  const infoB = ingredientInfo[b];
+                  
+                  if (!infoA || !infoB) return a.localeCompare(b);
+                  
+                  const catA = infoA.is_lto ? "LTO" : infoA.category;
+                  const catB = infoB.is_lto ? "LTO" : infoB.category;
+                  
+                  const catCompare = getCategoryOrder(catA) - getCategoryOrder(catB);
+                  
+                  if (catCompare === 0) {
+                    return a.localeCompare(b);
+                  }
+                  return catCompare;
+                })
+                .map(ingredient => {
+                const info = ingredientInfo[ingredient];
+                return (
+                  <div key={ingredient} className="ingredient-card static">
+                    {info && info.image && (
+                      <div className="ingredient-image">
+                        <img 
+                          src={`/images/${info.image}`} 
+                          alt={ingredient}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/icon.png';
+                            target.onerror = null;
+                          }}
+                        />
+                      </div>
+                    )}
+                    <span className="ingredient-name">
+                      {ingredient}
+                      {info && info.is_lto && <span className="lto-star">★</span>}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          <div className="sub-options-grid ingredients-options">
+            {missingOptions.map(option => {
+              const info = ingredientInfo[option];
+              return (
+                <button
+                  key={option}
+                  className={`
+                    sub-option ingredient-option
+                    ${selectedMissingOption === option ? 'selected' : ''}
+                    ${showResults && option === missingIngredient ? 'correct' : ''}
+                    ${showResults && selectedMissingOption === option && option !== missingIngredient ? 'incorrect' : ''}
+                  `}
+                  onClick={() => handleMissingOptionSelect(option)}
+                  disabled={showResults}
+                >
+                  <div className="sub-option-content">
+                    {info && info.image && (
+                      <div className="sub-option-image ingredient-image-small">
+                        <img 
+                          src={`/images/${info.image}`} 
+                          alt={option}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/icon.png';
+                            target.onerror = null;
+                          }}
+                        />
+                      </div>
+                    )}
+                    <span className="sub-option-name">{option}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
       </div>
 
       {!showResults ? (
         <button 
           className="submit-button"
           onClick={handleSubmit}
-          disabled={(quizMode === 'guess-sub' || quizMode === 'guess-sub-by-number') && !selectedSubOption ||
-                  quizMode === 'guess-number' && !selectedNumberOption}
+          disabled={
+            (quizMode === 'guess-sub' || quizMode === 'guess-sub-by-number') && !selectedSubOption ||
+            quizMode === 'guess-number' && !selectedNumberOption ||
+            quizMode === 'what-is-missing' && !selectedMissingOption
+          }
         >
           Submit Answer
         </button>

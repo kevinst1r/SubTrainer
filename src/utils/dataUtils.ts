@@ -26,7 +26,14 @@ export interface SortingConfig {
 
 export type IngredientData = Record<string, Ingredient>;
 
-export const INGREDIENT_CATEGORIES = ["All", "Wraps", "Meats", "Cheese", "Veggies", "Condiments", "LTO"];
+export const INGREDIENT_CATEGORIES = ["All", "Wraps", "Vegetables", "Condiments", "Meats", "Cheese", "LTO"];
+
+// Helper to get category index for sorting
+export function getCategoryOrder(category: string): number {
+  const index = INGREDIENT_CATEGORIES.indexOf(category);
+  // If not found, put it at the end
+  return index === -1 ? 999 : index;
+}
 
 export const GENERAL_TIPS = [
   "Remember to wash your hands and maintain a clean workstation!",
